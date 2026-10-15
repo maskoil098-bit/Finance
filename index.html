@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance AI — Smart Expense Tracker</title>
+
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1e293b" />
+  <meta name="description" content="ระบบบันทึกรายรับ-รายจ่ายอัจฉริยะ พร้อม AI สแกนใบเสร็จและแดชบอร์ดการเงิน" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Finance AI" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       TOP NAVIGATION BAR
+  ========================================================== -->
+  <header class="app-navbar topbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-logo-sq">
+          <i data-lucide="wallet"></i>
+        </div>
+        <span class="brand-title">Finance AI</span>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Main Navigation">
+        <button type="button" class="nav-tab active" data-tab="home" id="tab-home">Home</button>
+        <button type="button" class="nav-tab" data-tab="dashboard" id="tab-dashboard">Dashboard</button>
+        <button type="button" class="nav-tab" data-tab="analytics" id="tab-analytics">Analytics</button>
+      </nav>
+
+      <div class="nav-user-dropdown">
+        <div class="user-avatar-wrap">
+          <img src="assets/gura_hero_exact.png" alt="User avatar" class="user-avatar" />
+        </div>
+        <span class="user-name">ผู้ใช้</span>
+        <span class="chevron-down"><i data-lucide="chevron-down"></i></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- THEME AMBIENT FALLING SNOW & SPARKLE CANVAS -->
+  <canvas id="snowThemeCanvas" class="snow-theme-canvas" aria-hidden="true"></canvas>
+
+  <!-- BACKGROUND DECORATIONS (Soft Waves, Sparkle Stars & Geometric Elements) -->
+  <div class="bg-decorations" aria-hidden="true">
+    <!-- Left ripple wave -->
+    <svg class="decor-item decor-wave-left" viewBox="0 0 200 120" fill="none">
+      <path d="M-20 20 Q 30 5, 80 20 T 180 20 T 280 20" stroke="#b5d1ed" stroke-width="3" stroke-linecap="round"
+        fill="none" />
+      <path d="M-20 45 Q 30 30, 80 45 T 180 45 T 280 45" stroke="#b5d1ed" stroke-width="3" stroke-linecap="round"
+        fill="none" />
+      <path d="M-20 70 Q 30 55, 80 70 T 180 70 T 280 70" stroke="#b5d1ed" stroke-width="3" stroke-linecap="round"
+        fill="none" />
+      <path d="M-20 95 Q 30 80, 80 95 T 180 95 T 280 95" stroke="#b5d1ed" stroke-width="3" stroke-linecap="round"
+        fill="none" />
+    </svg>
+
+    <!-- Left sparkle star -->
+    <svg class="decor-item decor-star-left" viewBox="0 0 100 100" fill="#a4c6ea">
+      <path d="M50 0 C50 35, 65 50, 100 50 C65 50, 50 65, 50 100 C50 65, 35 50, 0 50 C35 50, 50 35, 50 0 Z" />
+    </svg>
+
+    <!-- Left pastel rhombus -->
+    <div class="decor-item decor-rhombus-left"></div>
+
+    <!-- Left diagonal stripes circle -->
+    <div class="decor-item decor-stripes-left"></div>
+
+    <!-- Right concentric arches -->
+    <svg class="decor-item decor-arches-right" viewBox="0 0 160 160" fill="none">
+      <circle cx="160" cy="0" r="140" stroke="#b7d3ee" stroke-width="12" stroke-linecap="round" />
+      <circle cx="160" cy="0" r="95" stroke="#c5ddf3" stroke-width="12" stroke-linecap="round" />
+      <circle cx="160" cy="0" r="50" stroke="#d5e8f7" stroke-width="12" stroke-linecap="round" />
+    </svg>
+
+    <!-- Right sparkle star -->
+    <svg class="decor-item decor-star-right" viewBox="0 0 100 100" fill="#a4c6ea">
+      <path d="M50 0 C50 35, 65 50, 100 50 C65 50, 50 65, 50 100 C50 65, 35 50, 0 50 C35 50, 50 35, 50 0 Z" />
+    </svg>
+
+    <!-- Right diagonal pill badge -->
+    <div class="decor-item decor-pill-right"></div>
+
+    <!-- Bottom waves -->
+    <svg class="decor-item decor-wave-bottom-left" viewBox="0 0 400 300" fill="#c3dcf3">
+      <path d="M-50 350 C 50 200, 200 240, 280 180 C 330 140, 320 60, 420 50 L 450 400 L -50 400 Z" opacity="0.6" />
+      <path d="M-50 350 C 40 260, 140 290, 220 230 C 290 180, 280 120, 370 120 L 400 400 L -50 400 Z" opacity="0.8" />
+    </svg>
+
+    <svg class="decor-item decor-wave-bottom-right" viewBox="0 0 400 300" fill="#c3dcf3">
+      <path d="M450 350 C 350 200, 200 240, 120 180 C 70 140, 80 60, -20 50 L -50 400 L 450 400 Z" opacity="0.6" />
+      <path d="M450 350 C 360 260, 260 290, 180 230 C 110 180, 120 120, 30 120 L 0 400 L 450 400 Z" opacity="0.8" />
+    </svg>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="finance-app">
+
+    <!-- SUBHEADER: Dashboard Title, Month Selector & AI Settings button -->
+    <div class="page-header-row">
+      <div class="page-header-left">
+        <h1 class="page-title" id="pageTitle">Home</h1>
+      </div>
+
+      <!-- Month Selector (Active in Dashboard & Analytics) -->
+      <div class="month-selector-bar" id="monthSelectorBar" style="display: none;">
+        <button type="button" class="month-nav-btn" id="prevMonthBtn" title="เดือนก่อนหน้า" aria-label="เดือนก่อนหน้า">
+          <i data-lucide="chevron-left"></i>
+        </button>
+
+        <div class="month-select-wrap">
+          <i data-lucide="calendar" class="month-calendar-icon"></i>
+          <select id="monthSelectDropdown" class="month-select-dropdown" aria-label="เลือกเดือนและปี">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <button type="button" class="month-nav-btn" id="nextMonthBtn" title="เดือนถัดไป" aria-label="เดือนถัดไป">
+          <i data-lucide="chevron-right"></i>
+        </button>
+
+        <button type="button" class="btn btn-month-today" id="currentMonthBtn" title="กลับมาเดือนปัจจุบัน">
+          เดือนนี้
+        </button>
+      </div>
+
+      <div class="page-header-right">
+        <button class="btn btn-outline-ai" id="openApiSettingsBtn">
+          <i data-lucide="settings" class="btn-icon"></i> AI Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         VIEW 1: HOME (QUICK EXPENSE, SCANNER, HISTORY)
+    ========================================================== -->
+    <div id="view-home" class="app-view active">
+
+      <!-- HERO SECTION: Greeting Card with Anime Mascot & Balance -->
+      <section class="hero-container">
+        <!-- Dark Blue Hero Banner -->
+        <div class="hero-banner">
+          <div class="hero-banner-content hero-mascot-banner-content">
+            <div class="hero-banner-mascot-box">
+              <img src="assets/gura_chibi_left_clean.png" alt="Mascot Greeting" class="hero-content-mascot-img" />
+              <div class="hero-mascot-speech-tag">
+                <span>ยินดีต้อนรับค่ะ~ <i data-lucide="sparkles" class="tag-icon"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-mascot-wrapper">
+            <div class="mascot-stage" id="heroMascotStage" title="Gawr Gura Mascot">
+              <img src="assets/gura_hero_body_wave.png" alt="Mascot Body" class="mascot-layer mascot-body" />
+              <img src="assets/gura_hero_hand_wave.png" alt="Mascot Waving Hand" class="mascot-layer mascot-hand" />
+              <img src="assets/gura_hero_cuff_front.png" alt="Mascot Sleeve Cuff" class="mascot-layer mascot-cuff" />
+              <img src="assets/gura_hero_eyes_closed.png" alt="Mascot Blinking Eyes"
+                class="mascot-layer mascot-blink" />
+            </div>
+          </div>
+        </div>
+
+        <!-- White Balance & Budget Card -->
+        <div class="balance-card">
+          <div class="balance-left">
+            <div class="hero-balance">
+              <span class="currency">฿</span><span id="financeHeroAmount">9,681.00</span>
+            </div>
+            <div class="hero-label">Available Balance</div>
+          </div>
+
+          <div class="balance-right">
+            <div class="hero-stats">
+              <button class="hero-stat editable" id="initialBalanceCard" title="คลิกเพื่อแก้ไขเงินตั้งต้น">
+                <span>เงินตั้งต้น</span>
+                <strong id="financeInitialBalance">฿10,000</strong>
+                <small><i data-lucide="edit-3" class="inline-icon"></i> แก้ไข</small>
+              </button>
+
+              <div class="hero-stat">
+                <span>ใช้ไปแล้ว</span>
+                <strong class="stat-spent" id="financeSpentBalance">฿319</strong>
+              </div>
+
+              <div class="hero-stat">
+                <span>คงเหลือ</span>
+                <strong class="stat-available" id="financeAvailableBalance">฿9,681</strong>
+              </div>
+            </div>
+
+            <div class="budget-area">
+              <div class="budget-meta">
+                <span class="budget-label">Budget Remaining</span>
+                <strong id="budgetRemainingText">97%</strong>
+              </div>
+              <div class="budget-track">
+                <span id="budgetBar" style="width: 97%;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUICK EXPENSE SECTION -->
+      <section class="section">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title">Quick Expense</h2>
+            <p class="section-desc">พิมพ์เร็วๆด่วน เช่น “กินข้าว 60 บาท”</p>
+          </div>
+        </div>
+
+        <div class="card form-card">
+          <form id="quickExpenseForm" class="quick-expense-form">
+            <div class="input-with-action">
+              <input type="text" id="quickExpenseTitle" placeholder="ใช้จ่ายค่าอะไรไป?" autocomplete="off" />
+              <button type="button" id="voiceExpenseBtn" class="voice-btn" title="พูดแทนการพิมพ์">
+                <i data-lucide="mic"></i>
+              </button>
+            </div>
+
+            <div class="money-input">
+              <span class="currency-prefix">฿</span>
+              <input type="number" id="quickExpenseAmount" placeholder="จำนวนเงิน" min="0" step="any" />
+            </div>
+
+            <div class="select-container">
+              <select id="quickExpenseCategory">
+                <option value="General">ทั่วไป</option>
+                <option value="Food">อาหาร & เครื่องดื่ม</option>
+                <option value="Transport">การเดินทาง</option>
+                <option value="Shopping">ช้อปปิ้ง / ซื้อของ</option>
+                <option value="Co-op">Co-op / Lab</option>
+                <option value="Health">สุขภาพ & ยา</option>
+                <option value="Other">อื่น ๆ</option>
+              </select>
+            </div>
+
+            <button class="btn btn-navy-action" type="submit">
+              บันทึกรายจ่าย
+            </button>
+          </form>
+
+          <div class="voice-banner" id="voiceListeningBanner" style="display:none;">
+            <div class="voice-pulse"><i data-lucide="mic"></i></div>
+            <div class="voice-copy">
+              <strong>กำลังฟัง...</strong>
+              <span id="voiceLiveTranscript">พูด เช่น “กินข้าวกะเพรา 60 บาท”</span>
+            </div>
+            <button type="button" class="btn secondary small" id="voiceStopBtn">หยุด</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI SCANNER SECTION -->
+      <section class="section">
+        <div class="section-heading">
+          <div>
+            <h2 class="section-title">AI Receipt & Food Scanner</h2>
+          </div>
+        </div>
+
+        <div class="dropzone-cute" id="financeInlineDropzone">
+          <input type="file" accept="image/*" id="inlineReceiptFileInput" hidden />
+          <input type="file" accept="image/*" capture="environment" id="directCameraCaptureInput" hidden />
+
+          <div class="scanner-chibi chibi-left" id="scannerChibiLeft" role="button" tabindex="0"
+            title="คลิกเพื่อทักทายน้อง Gura">
+            <span class="chibi-speech-bubble" id="chibiBubbleLeft" aria-hidden="true">A! สแกนสลิปไหม?</span>
+            <img src="assets/gura_chibi_left_clean.png" alt="Chibi Mascot" />
+          </div>
+
+          <div class="scanner-center-content">
+            <strong class="dropzone-title">Drag & Drop Receipt or Food Photo</strong>
+            <span class="dropzone-sub">รองรับ JPG, PNG, WEBP · หรือกดรูปกด Ctrl+V</span>
+
+            <div class="dropzone-actions">
+              <label for="inlineReceiptFileInput" class="btn btn-navy-outline">
+                <i data-lucide="folder-open"></i> เลือกรูปภาพ
+              </label>
+              <button type="button" id="inlineCameraBtn" class="btn btn-navy-outline trigger-live-camera"
+                style="display:none;">
+                <i data-lucide="camera"></i> เปิดกล้อง
+              </button>
+              <button type="button" id="financeScanBtn" class="btn btn-navy-action trigger-live-camera">
+                <i data-lucide="camera"></i> + Scan Receipt
+              </button>
+            </div>
+          </div>
+
+          <div class="scanner-chibi chibi-right" id="scannerChibiRight" role="button" tabindex="0"
+            title="คลิกเพื่อทักทายน้อง Gura">
+            <span class="chibi-speech-bubble" id="chibiBubbleRight" aria-hidden="true">ลากสลิปมาเลย!</span>
+            <img src="assets/gura_chibi_right_clean.png" alt="Chibi Mascot" />
+          </div>
+        </div>
+      </section>
+
+      <!-- RECEIPTS & EXPENSES HISTORY -->
+      <section class="section">
+        <div class="section-heading-row">
+          <div>
+            <h2 class="section-title">Receipts & Expenses</h2>
+            <p class="section-desc">กดที่รายการเพื่อดูรายการย่อยและรูปสลิป</p>
+          </div>
+
+          <button type="button" class="btn btn-reset-demo" id="financeResetBtn">
+            <i data-lucide="rotate-ccw"></i> Reset Demo Data
+          </button>
+        </div>
+
+        <div class="card history-card">
+          <div id="financeHistoryList"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- =========================================================
+         VIEW 2: DASHBOARD (ศูนย์ควบคุมงบประมาณ / BUDGET CONTROL)
+    ========================================================== -->
+    <div id="view-dashboard" class="app-view" style="display: none;">
+
+      <!-- 4 KPI SUMMARY CARDS -->
+      <section class="section kpi-summary-section">
+        <div class="kpi-summary-grid">
+          <div class="kpi-card card">
+            <div class="kpi-icon-wrap kpi-blue"><i data-lucide="target"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-label">งบประมาณเริ่มต้น</span>
+              <strong class="kpi-value" id="dashKpiInitial">฿10,000</strong>
+              <span class="kpi-sub">แก้ไขได้ที่หน้าแรก</span>
+            </div>
+          </div>
+
+          <div class="kpi-card card">
+            <div class="kpi-icon-wrap kpi-rose"><i data-lucide="credit-card"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-label">ใช้จ่ายเดือนนี้</span>
+              <strong class="kpi-value text-spent" id="dashKpiSpent">฿0</strong>
+              <span class="kpi-sub" id="dashKpiCount">0 รายการ</span>
+            </div>
+          </div>
+
+          <div class="kpi-card card">
+            <div class="kpi-icon-wrap kpi-green"><i data-lucide="shield-check"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-label">งบคงเหลือปลอดภัย</span>
+              <strong class="kpi-value text-safe" id="dashKpiRemaining">฿0</strong>
+              <span class="kpi-sub" id="dashKpiRemainingPct">100% คงเหลือ</span>
+            </div>
+          </div>
+
+          <div class="kpi-card card">
+            <div class="kpi-icon-wrap kpi-amber"><i data-lucide="zap"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-label">อัตราใช้จ่ายเฉลี่ย/วัน</span>
+              <strong class="kpi-value" id="dashKpiDailyBurn">฿0 / วัน</strong>
+              <span class="kpi-sub" id="dashKpiDaysInMonth">คำนวณจากเดือนปัจจุบัน</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREDICTIVE BUDGETING: AI FORECAST WIDGET -->
+      <section class="section">
+        <div class="card ai-forecast-card" id="aiForecastWidget">
+          <div class="ai-forecast-header">
+            <div class="ai-forecast-header-left">
+              <div class="ai-forecast-eyebrow">
+                <i data-lucide="sparkles" class="icon-sparkle"></i>
+                <span>PREDICTIVE BUDGETING ENGINE</span>
+              </div>
+              <h2 class="ai-forecast-title">AI Forecast</h2>
+              <p class="section-desc">ระบบทำนายยอดรวมการใช้จ่ายสิ้นเดือนจากอัตราเฉลี่ยรายวันจริง</p>
+            </div>
+            <div class="ai-forecast-header-right">
+              <span class="badge-month" id="forecastMonthBadge">ตุลาคม 2026</span>
+              <span class="forecast-status-badge safe" id="forecastStatusBadge">
+                <i data-lucide="shield-check"></i> คาดว่าจะคุมงบได้
+              </span>
+            </div>
+          </div>
+
+          <div class="ai-forecast-grid">
+            <!-- HERO CARD: PROJECTED TOTAL -->
+            <div class="forecast-hero-card" id="forecastHeroCard">
+              <div class="forecast-hero-top">
+                <span class="forecast-hero-label">
+                  <i data-lucide="trending-up"></i> ยอดทำนายสิ้นเดือน (Projected Total)
+                </span>
+                <span class="forecast-budget-tag" id="forecastBudgetTag">งบประมาณ ฿10,000</span>
+              </div>
+              <div class="forecast-hero-value-wrap">
+                <span class="forecast-currency">฿</span>
+                <span class="forecast-hero-value text-safe" id="forecastProjectedTotal">0</span>
+                <span class="forecast-alert-badge" id="forecastAlertBadge" style="display: none;">
+                  <i data-lucide="alert-triangle"></i> เกินงบ
+                </span>
+              </div>
+              <div class="forecast-hero-diff" id="forecastHeroDiff">
+                คำนวณจากยอดสะสม + การใช้จ่ายวันที่เหลือ
+              </div>
+            </div>
+
+            <!-- SUB METRIC 1: SPENT SO FAR -->
+            <div class="forecast-sub-card">
+              <div class="forecast-sub-icon icon-spent"><i data-lucide="wallet"></i></div>
+              <div class="forecast-sub-info">
+                <span class="forecast-sub-label">ใช้จ่ายจริงแล้ว</span>
+                <strong class="forecast-sub-value" id="forecastSpentSoFar">฿0</strong>
+                <span class="forecast-sub-hint" id="forecastElapsedDays">ผ่านไป 0 วัน</span>
+              </div>
+            </div>
+
+            <!-- SUB METRIC 2: DAILY BURN RATE -->
+            <div class="forecast-sub-card">
+              <div class="forecast-sub-icon icon-burn"><i data-lucide="zap"></i></div>
+              <div class="forecast-sub-info">
+                <span class="forecast-sub-label">เฉลี่ยต่อวัน (Burn Rate)</span>
+                <strong class="forecast-sub-value" id="forecastDailyAvg">฿0 / วัน</strong>
+                <span class="forecast-sub-hint" id="forecastDailyAvgHint">อิงจากวันที่มีรายการ</span>
+              </div>
+            </div>
+
+            <!-- SUB METRIC 3: PROJECTED REMAINING -->
+            <div class="forecast-sub-card">
+              <div class="forecast-sub-icon icon-remain"><i data-lucide="calendar-clock"></i></div>
+              <div class="forecast-sub-info">
+                <span class="forecast-sub-label">คาดการณ์วันที่เหลือ</span>
+                <strong class="forecast-sub-value" id="forecastRemainingSpend">฿0</strong>
+                <span class="forecast-sub-hint" id="forecastRemainingDays">เหลืออีก 0 วัน</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FORECAST PROGRESS BAR -->
+          <div class="forecast-meter-wrapper">
+            <div class="forecast-meter-labels">
+              <span>สัดส่วนยอดทำนายต่องบประมาณ</span>
+              <strong id="forecastPercentText">0%</strong>
+            </div>
+            <div class="forecast-meter-track">
+              <div class="forecast-meter-fill" id="forecastMeterFill" style="width: 0%;"></div>
+              <div class="forecast-meter-target-marker" title="ขีดจำกัดงบประมาณ 100%"></div>
+            </div>
+          </div>
+
+          <!-- AI ADVICE BANNER -->
+          <div class="forecast-advice-banner" id="forecastAdviceBanner">
+            <div class="advice-icon-wrap" id="forecastAdviceIcon">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div class="advice-content">
+              <strong class="advice-title" id="forecastAdviceTitle">คำแนะนำจาก AI</strong>
+              <p class="advice-desc" id="forecastAdviceDesc">กำลังวิเคราะห์แนวโน้มการเงิน...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MONTHLY CASH FLOW SUMMARY BOX -->
+      <section class="section">
+        <div class="card cashflow-card">
+          <div class="cashflow-header">
+            <div>
+              <div class="eyebrow-tag">FINANCIAL OVERVIEW</div>
+              <h2 class="cashflow-title">Monthly Cash Flow</h2>
+              <p class="section-desc">สรุปภาพรวมกระแสเงินสดและประเมินสถานะการเงินของเดือนนี้</p>
+            </div>
+            <div class="cashflow-badge-group">
+              <span class="badge-month" id="dashCashflowMonthBadge">ตุลาคม 2026</span>
+              <span class="cashflow-health-status good" id="dashCashflowHealthBadge"><i
+                  data-lucide="check-circle-2"></i> การเงินดีเยี่ยม</span>
+            </div>
+          </div>
+
+          <div class="cashflow-meter-box">
+            <div class="meter-info-row">
+              <span class="meter-label">สัดส่วนการใช้งบประมาณเดือนนี้</span>
+              <strong class="meter-pct" id="dashCashflowSpentPct">0%</strong>
+            </div>
+            <div class="cashflow-meter-track">
+              <div class="cashflow-meter-fill" id="dashCashflowMeterBar" style="width: 0%;"></div>
+            </div>
+            <div class="meter-helper-row">
+              <span id="dashCashflowStatusDesc">คุณใช้จ่ายอย่างประหยัดและมีเงินออมเหลือเฟือ</span>
+              <span id="dashCashflowRemainingSafe">คงเหลือปลอดภัย ฿0</span>
+            </div>
+          </div>
+
+          <div class="cashflow-metrics-row">
+            <div class="cf-metric-col">
+              <span class="cf-metric-label"><i data-lucide="arrow-down-left"></i> งบตั้งต้น / รายรับ</span>
+              <strong class="cf-metric-num" id="dashCashflowInflow">฿10,000</strong>
+            </div>
+            <div class="cf-metric-divider"></div>
+            <div class="cf-metric-col">
+              <span class="cf-metric-label"><i data-lucide="arrow-up-right"></i> รายจ่ายรวมเดือนนี้</span>
+              <strong class="cf-metric-num text-spent" id="dashCashflowOutflow">-฿0</strong>
+            </div>
+            <div class="cf-metric-divider"></div>
+            <div class="cf-metric-col">
+              <span class="cf-metric-label"><i data-lucide="wallet"></i> ยอดสุทธิคงเหลือ</span>
+              <strong class="cf-metric-num text-safe" id="dashCashflowNet">+฿10,000</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUDGET BY CATEGORY (PROGRESS BARS) -->
+      <section class="section">
+        <div class="section-heading-row">
+          <div>
+            <h2 class="section-title">Budget by Category</h2>
+            <p class="section-desc">สัดส่วนการใช้เงินแต่ละหมวดหมู่เทียบกับงบที่จัดสรร เพื่อคุมงบไม่ให้บานปลาย</p>
+          </div>
+          <span class="badge-pill">อัตราส่วนแนะนำ 50/30/20</span>
+        </div>
+
+        <div class="card category-budget-card">
+          <div id="dashboardCategoryList" class="category-budget-list">
+            <!-- Dynamically populated by renderDashboard() -->
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- =========================================================
+         VIEW 3: ANALYTICS (การวิเคราะห์ด้วยกราฟ & AI INSIGHTS)
+    ========================================================== -->
+    <div id="view-analytics" class="app-view" style="display: none;">
+
+      <!-- AI FINANCIAL SUMMARY (AI INSIGHTS BOX) -->
+      <section class="section">
+        <div class="card ai-insights-card">
+          <div class="ai-insights-inner">
+            <div class="ai-insights-content">
+              <div class="ai-badge-row">
+                <span class="ai-chip-tag"><i data-lucide="sparkles"></i> AI Financial Advisor</span>
+                <span class="ai-status-pulse"></span>
+                <span class="ai-analysis-time" id="aiAnalysisTimestamp">วิเคราะห์ล่าสุด เมื่อสักครู่</span>
+              </div>
+
+              <h2 class="ai-insights-title">AI Financial Summary</h2>
+
+              <div class="ai-speech-bubble" id="aiInsightsSpeech">
+                กำลังวิเคราะห์ข้อมูลการใช้จ่ายของคุณ...
+              </div>
+
+              <p class="ai-advice-subtext" id="aiInsightsAdvice">
+                คำแนะนำจาก AI จะคำนวณจากพฤติกรรมการใช้จ่ายย้อนหลัง 7 วันเพื่อช่วยคุณประหยัดเงิน
+              </p>
+
+              <div class="ai-quick-stats-row">
+                <div class="ai-stat-chip">
+                  <span class="chip-label"><i data-lucide="trending-up"></i> หมวดจ่ายสูงสุด:</span>
+                  <strong class="chip-val" id="aiTopCategory">-</strong>
+                </div>
+                <div class="ai-stat-chip">
+                  <span class="chip-label"><i data-lucide="pie-chart"></i> สัดส่วนหมวดนี้:</span>
+                  <strong class="chip-val" id="aiTopCategoryPct">0%</strong>
+                </div>
+                <div class="ai-stat-chip">
+                  <span class="chip-label"><i data-lucide="calendar"></i> รวม 7 วันล่าสุด:</span>
+                  <strong class="chip-val" id="ai7DayTotal">฿0</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-insights-mascot-wrap">
+              <img src="assets/gura_chibi_right_clean.png" alt="Gura AI Advisor" class="ai-mascot-avatar" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS CHARTS GRID (CATEGORY BREAKDOWN & SPENDING TRENDS) -->
+      <section class="section">
+        <div class="analytics-charts-grid">
+
+          <!-- 1. CATEGORY BREAKDOWN (DONUT CHART) -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Category Breakdown</h3>
+                <p class="chart-desc">สัดส่วนค่าใช้จ่ายแยกตามหมวดหมู่</p>
+              </div>
+              <span class="chart-badge">Donut Chart</span>
+            </div>
+
+            <div class="chart-canvas-wrap">
+              <canvas id="categoryDonutChart"></canvas>
+            </div>
+
+            <div id="categoryChartLegend" class="chart-custom-legend">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- 2. SPENDING TRENDS (MONTHLY BAR CHART) -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Spending Trends</h3>
+                <p class="chart-desc" id="spendingTrendsDesc">ยอดใช้จ่ายประจำเดือน (บาท)</p>
+              </div>
+              <span class="chart-badge" id="spendingTrendsBadge">Monthly Trends</span>
+            </div>
+
+            <div class="chart-canvas-wrap">
+              <canvas id="spendingTrendsChart"></canvas>
+            </div>
+
+            <div class="chart-footer-stats">
+              <div class="footer-stat-col">
+                <span class="fs-label" id="trendsSumLabel">ยอดรวมทั้งเดือน</span>
+                <strong class="fs-num" id="trends7DaySum">฿0</strong>
+              </div>
+              <div class="footer-stat-col">
+                <span class="fs-label">เฉลี่ยต่อวัน</span>
+                <strong class="fs-num" id="trendsDailyAvg">฿0</strong>
+              </div>
+              <div class="footer-stat-col">
+                <span class="fs-label" id="trendsPeakLabel">ช่วงที่จ่ายสูงสุด</span>
+                <strong class="fs-num" id="trendsPeakDay">-</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 3. COST BY PROJECT (PROJECT TAGS BREAKDOWN) -->
+      <section class="section">
+        <div class="section-heading-row">
+          <div>
+            <h2 class="section-title">Cost by Project</h2>
+            <p class="section-desc">รวมยอดค่าใช้จ่ายและต้นทุนแยกตาม Project Tag (#Hashtag) ที่ระบุในชื่อรายการ</p>
+          </div>
+          <span class="badge-pill" id="projectCountBadge">0 โปรเจกต์</span>
+        </div>
+
+        <div class="card project-cost-card">
+          <div class="project-cost-grid">
+            <!-- Left: Project Bar Chart -->
+            <div class="project-chart-col">
+              <div class="project-chart-header">
+                <span class="project-subhead"><i data-lucide="bar-chart-2"></i> สัดส่วนต้นทุนตามโปรเจกต์</span>
+              </div>
+              <div class="project-chart-wrap">
+                <canvas id="projectCostChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Right: Project Table & Summary -->
+            <div class="project-table-col">
+              <div class="project-chart-header">
+                <span class="project-subhead"><i data-lucide="list"></i> ตารางสรุปงบประมาณโปรเจกต์</span>
+              </div>
+              <div class="table-responsive" id="projectTableWrap">
+                <table class="project-cost-table" id="projectCostTable">
+                  <thead>
+                    <tr>
+                      <th>Project Tag</th>
+                      <th>จำนวน</th>
+                      <th>สัดส่วน</th>
+                      <th style="text-align: right;">รวมต้นทุน</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectCostTableBody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div id="projectCostEmpty" class="project-empty-state" style="display: none;">
+                <div class="project-empty-icon-wrap">
+                  <i data-lucide="tag" class="empty-icon"></i>
+                </div>
+                <p class="project-empty-title">ยังไม่มีรายการที่ติดแท็กโปรเจกต์</p>
+                <small class="project-empty-hint">ใส่เครื่องหมาย <code>#ชื่อโปรเจกต์</code> ในชื่อรายการ เช่น
+                  <em>ซื้ออุปกรณ์ #ProjectA</em> เพื่อเริ่มติดตามต้นทุน</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="app-footer">
+      Finance AI · Plain HTML + CSS + JavaScript
+    </footer>
+
+  </main>
+
+  <!-- =========================================================
+       RECEIPT SCANNER MODAL
+  ========================================================== -->
+  <div class="modal" id="receiptModal">
+    <div class="modal-box scanner-modal">
+      <button class="modal-close" data-close-modal="receiptModal" aria-label="Close modal"><i
+          data-lucide="x"></i></button>
+
+      <div class="modal-heading">
+        <div>
+          <div class="eyebrow">SMART AI FINANCE</div>
+          <h2>Receipt & Food Scanner</h2>
+        </div>
+        <span class="ai-badge ready" id="aiStatusBadge">AI Vision Ready</span>
+      </div>
+
+      <!-- INLINE API STATUS & QUICK SETUP -->
+      <div class="scanner-api-box" id="scannerApiBox">
+        <div class="scanner-api-status demo-mode" id="scannerApiStatus">
+          <div class="scanner-api-status-info">
+            <span class="status-indicator-dot demo" id="scannerApiDot"></span>
+            <span id="scannerApiStatusText">กำลังตรวจสอบสถานะ AI...</span>
+          </div>
+          <button type="button" class="btn-link-action" id="toggleScannerApiEditBtn"><i data-lucide="settings"></i>
+            ตั้งค่า / เปลี่ยน Key</button>
+        </div>
+
+        <div class="scanner-api-drawer" id="scannerApiDrawer" style="display:none;">
+          <div class="scanner-api-drawer-content">
+            <div class="scanner-api-desc">
+              <strong><i data-lucide="key"></i> ใส่ Gemini API Key เพื่อให้ AI
+                อ่านรูปภาพจริงและค้นหาราคาตลาดไทย</strong>
+              <span>(ใช้งานฟรีผ่าน Google AI Studio ไม่ต้องเสียค่าบริการ)</span>
+            </div>
+            <div class="scanner-api-inputs">
+              <input type="password" id="scannerApiKeyInput" placeholder="วาง Gemini API Key ที่นี่..."
+                autocomplete="off" />
+              <button type="button" class="btn btn-navy-action small" id="scannerSaveKeyBtn">
+                <i data-lucide="zap"></i> บันทึก & อ่านรูปนี้ทันที
+              </button>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="api-key-link">
+                รับ Key ฟรีที่ Google AI Studio ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scanner-layout">
+        <!-- LEFT SIDE -->
+        <section class="preview-panel">
+          <input type="file" accept="image/*" id="receiptFileInput" hidden />
+
+          <div class="preview-stage" id="previewStage">
+            <div class="scan-laser"></div>
+            <img id="receiptPreview" alt="Receipt preview" />
+            <div class="upload-placeholder" id="uploadPlaceholder">
+              <div class="scanner-icon large"><i data-lucide="scan-line"></i></div>
+              <strong>เลือกรูปสลิปหรือรูปอาหาร</strong>
+              <span>AI จะอ่านชื่อร้าน รายการ ราคา และหมวดหมู่</span>
+              <div class="upload-actions">
+                <label for="receiptFileInput" class="btn btn-navy-action">
+                  <i data-lucide="folder-open"></i> เลือกรูป
+                </label>
+                <button type="button" class="btn btn-navy-outline trigger-live-camera">
+                  <i data-lucide="camera"></i> ถ่ายรูป
+                </button>
+              </div>
+            </div>
+
+            <div class="reupload-bar" id="reuploadActionsBar" style="display:none;">
+              <label for="receiptFileInput" class="btn btn-navy-action small">
+                เปลี่ยนรูป
+              </label>
+              <button type="button" class="btn btn-navy-outline small trigger-live-camera">
+                ถ่ายใหม่
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT SIDE -->
+        <section class="result-panel">
+          <!-- EMPTY -->
+          <div class="ai-state" id="aiEmptyState">
+            <div class="ai-orb"><i data-lucide="sparkles"></i></div>
+            <h3>Waiting for image</h3>
+            <p>อัปโหลดใบเสร็จ สลิป หรือรูปอาหาร เพื่อเริ่มวิเคราะห์</p>
+          </div>
+
+          <!-- LOADING -->
+          <div class="ai-state" id="aiLoadingState" style="display:none;">
+            <div class="ai-orb analyzing"><i data-lucide="loader-2" class="spin-icon"></i></div>
+            <h3>AI is analyzing...</h3>
+            <p>กำลังอ่านข้อมูลและประเมินรายการ</p>
+            <div class="shimmer-stack">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- RESULT -->
+          <div id="aiResultState" style="display:none;">
+            <div class="ai-hint-box" id="aiHintBox">
+              <div class="ai-hint-label">
+                <span><i data-lucide="lightbulb"></i> AI Search & Hints (ค้นหา / ระบุข้อมูลเพิ่มให้ AI)</span>
+                <span class="ai-hint-tip">อ่านรูป + ค้นหาราคาตลาดไทย</span>
+              </div>
+              <div class="ai-hint-row">
+                <input type="text" id="scannerHintInput" placeholder="เช่น ทิชชู่ 1 ห่อ, ยี่ห้อ Kuma, ซื้อจาก 7-11" />
+                <button type="button" class="btn btn-navy-outline small" id="scannerReanalyzeBtn"
+                  title="สั่งให้ AI วิเคราะห์รูปภาพนี้ใหม่">
+                  <i data-lucide="refresh-cw"></i> ค้นหา & อ่านใหม่
+                </button>
+              </div>
+              <div class="ai-detected-note" id="scannerAiNotes" style="display:none;"></div>
+            </div>
+
+            <div class="form-grid">
+              <label>
+                Merchant / Title
+                <input type="text" id="merchantInput" placeholder="ชื่อร้าน หรือชื่อรายการ" />
+              </label>
+
+              <label>
+                Category
+                <select id="categorySelect">
+                  <option value="Food">Food</option>
+                  <option value="Transport">Transport</option>
+                  <option value="Shopping">Shopping</option>
+                  <option value="Co-op">Co-op</option>
+                  <option value="Health">Health</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="table-head">
+              <span>Items</span>
+              <span>Price (฿)</span>
+            </div>
+
+            <div class="receipt-items" id="receiptItemsContainer"></div>
+
+            <div class="items-actions">
+              <button type="button" class="link-btn" id="addReceiptItemBtn">
+                + Add Item
+              </button>
+              <button type="button" class="link-btn danger-link" id="clearAllItemsBtn">
+                Clear All
+              </button>
+            </div>
+
+            <div class="receipt-total">
+              <div>
+                <span>Total Amount</span>
+                <strong>ยอดรวมสุทธิ</strong>
+              </div>
+              <strong id="receiptTotal">฿0</strong>
+            </div>
+
+            <button type="button" class="btn btn-navy-action full" id="confirmReceiptBtn">
+              Confirm & Deduct
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       LIVE CAMERA MODAL
+  ========================================================== -->
+  <div class="modal" id="liveCameraModal">
+    <div class="modal-box camera-modal">
+      <button class="modal-close" id="closeLiveCameraBtn" aria-label="Close camera"><i data-lucide="x"></i></button>
+
+      <div class="modal-heading">
+        <div>
+          <div class="eyebrow">LIVE CAMERA</div>
+          <h2>ถ่ายภาพสลิป / อาหาร</h2>
+        </div>
+        <span class="live-badge">
+          <span class="status-dot"></span>
+          CAMERA
+        </span>
+      </div>
+
+      <div class="camera-viewfinder">
+        <video id="liveCameraVideo" autoplay playsinline muted></video>
+        <div class="camera-frame"></div>
+        <div class="camera-flash" id="cameraFlashOverlay"></div>
+      </div>
+
+      <div class="camera-actions">
+        <button type="button" class="btn btn-navy-outline" id="cancelCameraBtn">ยกเลิก</button>
+        <button type="button" class="btn btn-navy-action" id="snapPhotoBtn"><i data-lucide="camera"></i>
+          Capture</button>
+        <button type="button" class="btn btn-navy-outline" id="switchCameraBtn"><i data-lucide="refresh-cw"></i>
+          สลับกล้อง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       AI SETTINGS MODAL
+  ========================================================== -->
+  <div class="modal" id="apiSettingsModal">
+    <div class="modal-box settings-modal">
+      <button class="modal-close" data-close-modal="apiSettingsModal" aria-label="Close settings"><i
+          data-lucide="x"></i></button>
+
+      <div class="eyebrow">AI CONFIGURATION</div>
+      <h2>Gemini API Key</h2>
+      <p class="settings-note">
+        สำหรับทดลองใช้งานในเครื่องเท่านั้น ถ้านำเว็บขึ้นออนไลน์จริง ไม่ควรฝัง API Key ไว้ใน JavaScript ฝั่ง Browser
+      </p>
+
+      <label class="field-label">
+        API Key
+        <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key" autocomplete="off" />
+      </label>
+
+      <div class="settings-actions">
+        <button class="btn btn-navy-outline" id="testApiKeyBtn" type="button"><i data-lucide="search"></i> Test
+          Key</button>
+        <button class="btn btn-navy-outline" id="clearApiKeyBtn" type="button">Clear</button>
+        <button class="btn btn-navy-action" id="saveApiKeyBtn" type="button">Save</button>
+      </div>
+
+      <div class="demo-note">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="api-key-link"
+          style="font-weight:600;">
+          <i data-lucide="key"></i> รับ Gemini API Key ฟรีที่ Google AI Studio ↗
+        </a>
+        <p style="margin: 8px 0 0; font-size: 11px; color: var(--muted); line-height: 1.5;">
+          รองรับ Gemini 3.8 Flash / 2.5 Flash / 2.0 Flash (Auto Discovery) · ถ้าไม่ใส่ Key ระบบจะใช้ Demo AI Result
+        </p>
+      </div>
+
+      <!-- DATA MANAGEMENT (BACKUP & RESTORE) -->
+      <div class="settings-divider"></div>
+
+      <div class="eyebrow">DATA MANAGEMENT</div>
+      <h2>สำรอง & กู้คืนข้อมูล (Backup & Restore)</h2>
+      <p class="settings-note">
+        ดึงข้อมูลทั้งหมดจากระบบบันทึกเป็นไฟล์ .json เพื่อสำรองไว้ในเครื่อง หรือนำเข้าไฟล์เดิมเพื่อกู้คืนข้อมูล
+      </p>
+
+      <div class="data-mgmt-card">
+        <div class="data-mgmt-info">
+          <div class="data-mgmt-stat">
+            <span class="dm-label">รายการในระบบ:</span>
+            <strong class="dm-val" id="backupTxCount">0 รายการ</strong>
+          </div>
+          <div class="data-mgmt-stat">
+            <span class="dm-label">เงินคงเหลือเริ่มต้น:</span>
+            <strong class="dm-val" id="backupBalanceVal">฿0</strong>
+          </div>
+        </div>
+
+        <div class="data-mgmt-buttons">
+          <button type="button" class="btn btn-navy-action data-btn-export" id="exportBackupBtn">
+            <i data-lucide="download"></i> Export Backup
+          </button>
+          <button type="button" class="btn btn-navy-outline data-btn-import" id="importBackupBtn">
+            <i data-lucide="upload"></i> Import Backup
+          </button>
+          <!-- Hidden file input for import -->
+          <input type="file" id="importBackupFileInput" accept=".json,application/json" style="display: none;" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ANIME CONFIRM & PROMPT MODAL
+  ========================================================== -->
+  <div class="modal anime-dialog-backdrop" id="animeDialogModal" role="dialog" aria-modal="true"
+    aria-labelledby="animeDialogTitle">
+    <div class="modal-box anime-dialog-box">
+      <!-- Mascot Floating Header -->
+      <div class="anime-dialog-mascot-wrapper">
+        <div class="anime-dialog-mascot-container" id="animeDialogMascotContainer">
+          <img src="assets/gura_emote_plead.png" alt="Mascot" class="anime-dialog-mascot-img is-crying"
+            id="animeDialogMascot" />
+          <div class="mascot-tear tear-left" id="mascotTearLeft"></div>
+          <div class="mascot-tear tear-right" id="mascotTearRight"></div>
+        </div>
+        <div class="anime-dialog-bubble" id="animeDialogBubble">
+          <span class="bubble-tag">Gura ถามว่า...</span>
+          <span class="bubble-text" id="animeDialogBubbleText">แน่ใจไหมคะว่าจะลบ? <img src="assets/gura_emote_plead.png"
+              alt="หน้าน้อง" class="inline-mascot-emoji" /></span>
+        </div>
+      </div>
+
+      <!-- Dialog Body -->
+      <div class="anime-dialog-content">
+        <h3 class="anime-dialog-title" id="animeDialogTitle">ลบรายการใช้จ่ายนี้ใช่ไหม?</h3>
+
+        <!-- Highlight Card for Transaction Details -->
+        <div class="anime-dialog-card" id="animeDialogDetailCard" style="display: none;">
+          <div class="anime-dialog-item-row">
+            <div class="item-shop-badge">
+              <span class="shop-icon" id="animeDialogShopIcon"><i data-lucide="store"></i></span>
+              <span class="shop-name" id="animeDialogMerchant">7-Eleven</span>
+            </div>
+            <div class="item-amount-badge" id="animeDialogAmount">฿224.00</div>
+          </div>
+          <div class="anime-dialog-refund-hint" id="animeDialogRefundHint">
+            <span class="refund-icon"><i data-lucide="corner-up-left"></i></span>
+            <span>ยอดเงินนี้จะถูกคืนกลับเข้า <strong>Available Balance</strong></span>
+          </div>
+        </div>
+
+        <!-- Plain Message (For general confirm/prompt) -->
+        <p class="anime-dialog-message" id="animeDialogMessage" style="display: none;"></p>
+
+        <!-- Input for Prompt Mode -->
+        <div class="anime-dialog-input-group" id="animeDialogInputGroup" style="display: none;">
+          <input type="text" class="anime-dialog-input" id="animeDialogInput" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="anime-dialog-actions">
+        <button type="button" class="btn btn-dialog-cancel" id="animeDialogCancelBtn">ยกเลิก</button>
+        <button type="button" class="btn btn-dialog-confirm" id="animeDialogConfirmBtn">ยืนยัน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       EDIT TRANSACTION MODAL
+  ========================================================== -->
+  <div class="modal anime-dialog-backdrop" id="editTransactionModal" role="dialog" aria-modal="true"
+    aria-labelledby="editTxModalTitle">
+    <div class="modal-box anime-dialog-box edit-transaction-modal-box">
+      <!-- Mascot Floating Header -->
+      <div class="anime-dialog-mascot-wrapper">
+        <img src="assets/gura_chibi_left_clean.png" alt="Mascot" class="anime-dialog-mascot-img" />
+        <div class="anime-dialog-bubble">
+          <span class="bubble-tag">Gura บอกว่า...</span>
+          <span class="bubble-text">แก้ไขข้อมูลรายการนี้ได้เลยค่ะ~</span>
+        </div>
+      </div>
+
+      <div class="anime-dialog-content">
+        <h3 class="anime-dialog-title" id="editTxModalTitle">
+          <i data-lucide="pencil" class="title-icon"></i> แก้ไขรายการใช้จ่าย
+        </h3>
+
+        <form id="editTransactionForm" class="edit-tx-form" onsubmit="return false;">
+          <input type="hidden" id="editTxId" />
+
+          <div class="form-field-group">
+            <label for="editTxMerchant" class="field-label">
+              <i data-lucide="shopping-bag"></i> ชื่อรายการ / ร้านค้า
+            </label>
+            <input type="text" id="editTxMerchant" class="input edit-input" placeholder="เช่น 7-Eleven, ข้าวผัดกะเพรา"
+              required />
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-field-group">
+              <label for="editTxCategory" class="field-label">
+                <i data-lucide="tag"></i> หมวดหมู่
+              </label>
+              <select id="editTxCategory" class="input edit-input">
+                <option value="Food">อาหาร & เครื่องดื่ม</option>
+                <option value="Shopping">ช้อปปิ้ง / ซื้อของ</option>
+                <option value="Transport">การเดินทาง</option>
+                <option value="Bills">บิล & สาธารณูปโภค</option>
+                <option value="Health">สุขภาพ & ยา</option>
+                <option value="General">ทั่วไป / อื่น ๆ</option>
+              </select>
+            </div>
+
+            <div class="form-field-group">
+              <label for="editTxAmount" class="field-label">
+                <i data-lucide="coins"></i> ราคา / ยอดเงิน (บาท)
+              </label>
+              <input type="number" id="editTxAmount" class="input edit-input" step="0.01" min="0.01" placeholder="0.00"
+                required />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="anime-dialog-actions">
+        <button type="button" class="btn btn-dialog-cancel" id="cancelEditTxBtn">ยกเลิก</button>
+        <button type="button" class="btn btn-navy-action" id="saveEditTxBtn">
+          <i data-lucide="check"></i> บันทึกการแก้ไข
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
